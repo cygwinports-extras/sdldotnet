@@ -1,0 +1,25 @@
+inherit mono
+
+DESCRIPTION="High-level .NET bindings for SDL libraries"
+HOMEPAGE="http://cs-sdl.sourceforge.net/"
+SRC_URI="mirror://sourceforge/cs-sdl/${P}.tar.gz"
+
+SRC_DIR="${P}/source"
+
+src_compile() {
+	lndirs
+	cd ${B}/src
+	nant -D:build.dir="bin/Release" -D:build.debug=false || error "nant build failed"
+
+	cd ${B}/examples/SdlDotNetCDPlayer
+	nant -D:build.dir="bin/Release" -D:build.debug=false || error "nant build failed"
+
+	cd ${B}/examples/SdlDotNetExamples
+	nant -D:build.dir="bin/Release" -D:build.debug=false || error "nant build failed"
+}
+
+src_install() {
+	cd ${B}/src
+	gacinto SdlDotNet
+	dogac bin/Release/SdlDotNet.dll
+}
